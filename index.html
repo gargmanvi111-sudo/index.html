@@ -1,94 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGX Eco-Robot Prototype</title>
     <style>
-        /* CSS STYLES */
-        :root { --sgx: #006837; --bg: #f0f2f5; }
+        /* This section makes the background dark so the phone stands out */
         body { 
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
-            background: #121212; 
-            display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; margin: 0; 
+            background-color: #1a1a1a; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            font-family: sans-serif;
         }
-        #phone { 
-            width: 360px; height: 720px; background: white; 
-            border-radius: 40px; border: 10px solid #333; 
-            display: flex; flex-direction: column; overflow: hidden; 
+
+        /* This is the white phone container */
+        #phone {
+            width: 350px;
+            height: 650px;
+            background: white;
+            border: 8px solid #333;
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        #header { background: var(--sgx); color: white; padding: 40px 15px 15px; text-align: center; }
-        #header h2 { margin: 0; font-size: 18px; }
-        #chat-box { flex: 1; padding: 15px; overflow-y: auto; background: var(--bg); display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 12px; border-radius: 15px; font-size: 13px; max-width: 80%; line-height: 1.4; }
+
+        /* The Green Header from your Strategy */
+        .header {
+            background-color: #006837;
+            color: white;
+            padding: 30px 10px 15px;
+            text-align: center;
+        }
+
+        /* The Chat Area */
+        #chat {
+            flex: 1;
+            background-color: #f4f4f4;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .bubble {
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 13px;
+            max-width: 80%;
+        }
+
         .bot { background: white; align-self: flex-start; border: 1px solid #ddd; }
-        .user { background: var(--sgx); color: white; align-self: flex-end; }
-        #controls { padding: 20px; background: white; border-top: 1px solid #ddd; }
-        .slider-group { margin-bottom: 15px; }
-        label { font-size: 11px; font-weight: bold; color: #666; display: flex; justify-content: space-between; }
-        input[type=range] { width: 100%; accent-color: var(--sgx); margin-top: 5px; }
-        button { width: 100%; background: var(--sgx); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .stock-card { background: #fff; border-left: 5px solid var(--sgx); padding: 10px; margin-top: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .user { background: #006837; color: white; align-self: flex-end; }
+
+        /* The Control Panel */
+        .controls {
+            padding: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        input[type=range] { width: 100%; accent-color: #006837; }
+        
+        button {
+            width: 100%;
+            background: #006837;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
 <div id="phone">
-    <div id="header">
-        <h2>Eco-Robot Advisor</h2>
-        <div style="font-size: 10px; opacity: 0.8;">SGX SUSTAIN INVEST</div>
+    <div class="header">
+        <div style="font-size: 10px; opacity: 0.7;">SGX SUSTAIN INVEST</div>
+        <div style="font-weight: bold; font-size: 18px;">Eco-Robot Advisor</div>
     </div>
-    
-    <div id="chat-box" id="chatContainer">
-        <div class="msg bot">Hello! I'm your <b>Eco-Robot</b>. 🤖<br><br>Adjust the sliders to set your ESG priorities, and I'll find the best SGX-listed matches for you.</div>
+
+    <div id="chat">
+        <div class="bubble bot">Hello! I'm <b>Eco-Robot</b>. 🤖<br><br>Adjust the sliders to set your ESG priorities and I'll find your SGX matches!</div>
     </div>
-    
-    <div id="controls">
-        <div class="slider-group">
-            <label>Environmental Focus <span>Low-High</span></label>
-            <input type="range" id="env" min="0" max="100" value="50">
-        </div>
-        <div class="slider-group">
-            <label>Social/Governance <span>Low-High</span></label>
-            <input type="range" id="soc" min="0" max="100" value="50">
-        </div>
-        <button onclick="runAdvice()">Generate Recommendation</button>
+
+    <div class="controls">
+        <label style="font-size: 11px; font-weight: bold;">Environmental Priority</label>
+        <input type="range" id="env" value="50">
+        
+        <label style="font-size: 11px; font-weight: bold; display: block; margin-top: 10px;">Yield/Return Focus</label>
+        <input type="range" id="yield" value="50">
+        
+        <button onclick="getAdvice()">Generate Strategy</button>
     </div>
 </div>
 
 <script>
-    const stocks = [
-        { name: "Sembcorp Ind.", code: "U96", rationale: "Leader in Renewable energy transition.", return: "+12.4%" },
-        { name: "DBS Group", code: "D05", rationale: "High ESG Transparency & Governance score.", return: "+9.2%" }
-    ];
-
-    function runAdvice() {
-        const chat = document.getElementById('chatContainer');
-        const envVal = document.getElementById('env').value;
+    function getAdvice() {
+        const chat = document.getElementById('chat');
+        const env = document.getElementById('env').value;
         
-        // Add User Message
+        // User Message
         let u = document.createElement('div');
-        u.className = 'msg user';
-        u.innerHTML = `Environmental Priority: ${envVal}%`;
+        u.className = 'bubble user';
+        u.innerText = "Check my " + env + "% Env focus.";
         chat.appendChild(u);
 
-        // Add Bot Response
+        // Bot Response
         setTimeout(() => {
             let b = document.createElement('div');
-            b.className = 'msg bot';
-            let selection = (envVal > 50) ? stocks[0] : stocks[1];
+            b.className = 'bubble bot';
             
-            b.innerHTML = `
-                <b>Match Found!</b><br>
-                Based on your preference, consider:
-                <div class="stock-card">
-                    <b>${selection.name} (${selection.code})</b><br>
-                    <small>Expected Return: ${selection.return}</small><br>
-                    <p style="font-size:11px; margin:5px 0 0;">${selection.rationale}</p>
-                </div>
-            `;
+            // Strategic Logic
+            if(env > 60) {
+                b.innerHTML = "<b>Match: Sembcorp (U96)</b><br>Yield: +12.4%<br><i>Rationale: Leader in energy transition.</i>";
+            } else {
+                b.innerHTML = "<b>Match: DBS (D05)</b><br>Yield: +9.2%<br><i>Rationale: High transparency & Governance.</i>";
+            }
+            
             chat.appendChild(b);
             chat.scrollTop = chat.scrollHeight;
         }, 500);
