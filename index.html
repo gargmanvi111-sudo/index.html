@@ -1,130 +1,128 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGX Sustain Invest | Eco-Robot</title>
     <style>
-        /* This section makes the background dark so the phone stands out */
-        body { 
-            background-color: #1a1a1a; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            font-family: sans-serif;
-        }
-
-        /* This is the white phone container */
-        #phone {
-            width: 350px;
-            height: 650px;
-            background: white;
-            border: 8px solid #333;
-            border-radius: 40px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-
-        /* The Green Header from your Strategy */
-        .header {
-            background-color: #006837;
-            color: white;
-            padding: 30px 10px 15px;
-            text-align: center;
-        }
-
-        /* The Chat Area */
-        #chat {
-            flex: 1;
-            background-color: #f4f4f4;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .bubble {
-            padding: 10px 15px;
-            border-radius: 15px;
-            font-size: 13px;
-            max-width: 80%;
-        }
-
-        .bot { background: white; align-self: flex-start; border: 1px solid #ddd; }
-        .user { background: #006837; color: white; align-self: flex-end; }
-
-        /* The Control Panel */
-        .controls {
-            padding: 20px;
-            border-top: 1px solid #ddd;
-        }
-
-        input[type=range] { width: 100%; accent-color: #006837; }
+        :root { --sgx: #006837; --bg: #f8f9fa; --text: #333; }
+        body { background: #121212; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; font-family: 'Segoe UI', Arial, sans-serif; }
         
-        button {
-            width: 100%;
-            background: #006837;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            margin-top: 10px;
-            cursor: pointer;
-        }
+        #phone { width: 375px; height: 750px; background: white; border-radius: 40px; border: 10px solid #222; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        
+        #header { background: var(--sgx); color: white; padding: 40px 20px 15px; text-align: center; }
+        #header h2 { margin: 0; font-size: 20px; font-weight: 600; }
+        #header p { margin: 5px 0 0; font-size: 10px; opacity: 0.8; letter-spacing: 1px; }
+
+        #chat-box { flex: 1; padding: 15px; overflow-y: auto; background: var(--bg); display: flex; flex-direction: column; gap: 12px; }
+        
+        .msg { padding: 12px 16px; border-radius: 18px; font-size: 13px; max-width: 85%; line-height: 1.4; animation: fadeIn 0.3s ease; }
+        .bot { background: white; border: 1px solid #ddd; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .user { background: var(--sgx); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+
+        .stock-card { background: white; border: 1px solid #eee; border-left: 5px solid var(--sgx); border-radius: 10px; padding: 12px; margin-top: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .perf-up { color: #2e7d32; font-weight: bold; font-size: 14px; }
+        
+        .follow-up-area { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .chip { background: #e8f5e9; color: var(--sgx); border: 1px solid var(--sgx); padding: 6px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: 0.2s; font-weight: 600; }
+        .chip:hover { background: var(--sgx); color: white; }
+
+        #controls { padding: 20px; background: white; border-top: 1px solid #eee; }
+        .slider-row { margin-bottom: 12px; }
+        .slider-row label { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; color: #666; margin-bottom: 4px; }
+        input[type=range] { width: 100%; accent-color: var(--sgx); }
+        
+        .btn-main { width: 100%; background: var(--sgx); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div id="phone">
-    <div class="header">
-        <div style="font-size: 10px; opacity: 0.7;">SGX SUSTAIN INVEST</div>
-        <div style="font-weight: bold; font-size: 18px;">Eco-Robot Advisor</div>
+    <div id="header">
+        <h2>Eco-Robot Advisor</h2>
+        <p>RETAIL-NATIVE ESG ENGINE</p>
     </div>
 
-    <div id="chat">
-        <div class="bubble bot">Hello! I'm <b>Eco-Robot</b>. 🤖<br><br>Adjust the sliders to set your ESG priorities and I'll find your SGX matches!</div>
+    <div id="chat-box" id="chatDisplay">
+        <div class="msg bot">Welcome! Adjust your 4 ESG priority sliders below. I'll analyze <b>ESGenome</b> data to find your match. 🤖</div>
     </div>
 
-    <div class="controls">
-        <label style="font-size: 11px; font-weight: bold;">Environmental Priority</label>
-        <input type="range" id="env" value="50">
-        
-        <label style="font-size: 11px; font-weight: bold; display: block; margin-top: 10px;">Yield/Return Focus</label>
-        <input type="range" id="yield" value="50">
-        
-        <button onclick="getAdvice()">Generate Strategy</button>
+    <div id="controls">
+        <div class="slider-row">
+            <label>Environmental <span>Carbon/Net-Zero</span></label>
+            <input type="range" id="e_val" value="50">
+        </div>
+        <div class="slider-row">
+            <label>Social <span>Diversity/Labor</span></label>
+            <input type="range" id="s_val" value="50">
+        </div>
+        <div class="slider-row">
+            <label>Governance <span>Transparency</span></label>
+            <input type="range" id="g_val" value="50">
+        </div>
+        <div class="slider-row">
+            <label>Yield <span>Returns Focus</span></label>
+            <input type="range" id="y_val" value="50">
+        </div>
+        <button class="btn-main" onclick="generateAdvice()">Generate Portfolio Insight</button>
     </div>
 </div>
 
 <script>
-    function getAdvice() {
-        const chat = document.getElementById('chat');
-        const env = document.getElementById('env').value;
-        
-        // User Message
-        let u = document.createElement('div');
-        u.className = 'bubble user';
-        u.innerText = "Check my " + env + "% Env focus.";
-        chat.appendChild(u);
+    const stocks = {
+        env: { name: "Sembcorp Industries", code: "U96", return: "+12.4%", perf: "Outperforming (1yr: +24%)", rationale: "Leader in renewable energy pivot. High IFRS S1 compliance." },
+        soc: { name: "ComfortDelGro", code: "C52", return: "+6.8%", perf: "Stable (1yr: +8%)", rationale: "Top-tier employee safety and social inclusion scores." },
+        gov: { name: "DBS Group", code: "D05", return: "+9.2%", perf: "Strong (1yr: +15%)", rationale: "Highest governance transparency rating in the region." },
+        yld: { name: "CapitaLand Ascas REIT", code: "A17U", return: "+8.5%", perf: "Dividend Growth", rationale: "Sustainable properties with high eco-certification rates." }
+    };
 
-        // Bot Response
+    function addMessage(text, type) {
+        const chat = document.getElementById('chatDisplay');
+        const m = document.createElement('div');
+        m.className = 'msg ' + type;
+        m.innerHTML = text;
+        chat.appendChild(m);
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    function generateAdvice() {
+        const e = document.getElementById('e_val').value;
+        const s = document.getElementById('s_val').value;
+        const g = document.getElementById('g_val').value;
+        const y = document.getElementById('y_val').value;
+        
+        addMessage(`My Priorities: E:${e}% S:${s}% G:${g}% Y:${y}%`, 'user');
+
         setTimeout(() => {
-            let b = document.createElement('div');
-            b.className = 'bubble bot';
+            let selected = (e > s && e > g && e > y) ? stocks.env : (y > 60 ? stocks.yld : stocks.gov);
             
-            // Strategic Logic
-            if(env > 60) {
-                b.innerHTML = "<b>Match: Sembcorp (U96)</b><br>Yield: +12.4%<br><i>Rationale: Leader in energy transition.</i>";
-            } else {
-                b.innerHTML = "<b>Match: DBS (D05)</b><br>Yield: +9.2%<br><i>Rationale: High transparency & Governance.</i>";
-            }
+            let botText = `<b>Analysis Complete!</b><br>Suggested for your profile:
+                <div class="stock-card">
+                    <b>${selected.name} (${selected.code})</b><br>
+                    <span class="perf-up">Proj. Return: ${selected.return}</span><br>
+                    <small>History: ${selected.perf}</small>
+                    <p style="font-size:11px; margin-top:8px;"><b>Rationale:</b> ${selected.rationale}</p>
+                </div>
+                <div class="follow-up-area">
+                    <div class="chip" onclick="ask('How to buy fractional?')">How to buy fractional?</div>
+                    <div class="chip" onclick="ask('What are the risks?')">What are the risks?</div>
+                    <div class="chip" onclick="ask('View ESGenome Score')">View ESGenome Score</div>
+                </div>`;
+            addMessage(botText, 'bot');
+        }, 800);
+    }
+
+    function ask(q) {
+        addMessage(q, 'user');
+        setTimeout(() => {
+            let ans = "";
+            if(q.includes('fractional')) ans = "Through the SGX Sustain Invest layer, you can buy this stock with as little as <b>$100</b>! No need to buy a full 100-share lot.";
+            else if(q.includes('risks')) ans = "ESG investing still carries market risk. However, high-governance stocks like this typically show lower volatility during market downturns.";
+            else ans = "This stock has a <b>'Leader'</b> rating on ESGenome, placing it in the top 10% of Singapore-listed companies for climate disclosure.";
             
-            chat.appendChild(b);
-            chat.scrollTop = chat.scrollHeight;
-        }, 500);
+            addMessage(ans, 'bot');
+        }, 600);
     }
 </script>
 
