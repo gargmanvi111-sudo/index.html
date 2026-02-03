@@ -3,77 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGX Sustain Invest | Eco-Robot</title>
+    <title>SGX Eco-Robot Prototype</title>
     <style>
-        :root { 
-            --sgx-green: #006837; 
-            --sgx-light: #e8f5e9;
-            --accent-gold: #D4AF37;
-            --glass: rgba(255, 255, 255, 0.9);
-        }
-        
+        /* CSS STYLES */
+        :root { --sgx: #006837; --bg: #f0f2f5; }
         body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background: linear-gradient(135deg, #1a1a1a 0%, #002b18 100%);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            background: #121212; 
             display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; margin: 0; color: #333;
+            min-height: 100vh; margin: 0; 
         }
-
-        /* Phone Frame Design */
         #phone { 
-            width: 380px; height: 800px; background: #fdfdfd; 
-            border-radius: 50px; border: 14px solid #222; 
-            overflow: hidden; display: flex; flex-direction: column; 
-            position: relative; box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+            width: 360px; height: 720px; background: white; 
+            border-radius: 40px; border: 10px solid #333; 
+            display: flex; flex-direction: column; overflow: hidden; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
+        #header { background: var(--sgx); color: white; padding: 40px 15px 15px; text-align: center; }
+        #header h2 { margin: 0; font-size: 18px; }
+        #chat-box { flex: 1; padding: 15px; overflow-y: auto; background: var(--bg); display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 12px; border-radius: 15px; font-size: 13px; max-width: 80%; line-height: 1.4; }
+        .bot { background: white; align-self: flex-start; border: 1px solid #ddd; }
+        .user { background: var(--sgx); color: white; align-self: flex-end; }
+        #controls { padding: 20px; background: white; border-top: 1px solid #ddd; }
+        .slider-group { margin-bottom: 15px; }
+        label { font-size: 11px; font-weight: bold; color: #666; display: flex; justify-content: space-between; }
+        input[type=range] { width: 100%; accent-color: var(--sgx); margin-top: 5px; }
+        button { width: 100%; background: var(--sgx); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .stock-card { background: #fff; border-left: 5px solid var(--sgx); padding: 10px; margin-top: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
 
-        /* Premium Header */
-        #header { 
-            background: linear-gradient(to right, #006837, #004d29); 
-            color: white; padding: 45px 20px 20px; text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        #header h2 { margin: 0; font-size: 20px; font-weight: 300; letter-spacing: 2px; }
-        #header span { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; opacity: 0.7; }
+<div id="phone">
+    <div id="header">
+        <h2>Eco-Robot Advisor</h2>
+        <div style="font-size: 10px; opacity: 0.8;">SGX SUSTAIN INVEST</div>
+    </div>
+    
+    <div id="chat-box" id="chatContainer">
+        <div class="msg bot">Hello! I'm your <b>Eco-Robot</b>. 🤖<br><br>Adjust the sliders to set your ESG priorities, and I'll find the best SGX-listed matches for you.</div>
+    </div>
+    
+    <div id="controls">
+        <div class="slider-group">
+            <label>Environmental Focus <span>Low-High</span></label>
+            <input type="range" id="env" min="0" max="100" value="50">
+        </div>
+        <div class="slider-group">
+            <label>Social/Governance <span>Low-High</span></label>
+            <input type="range" id="soc" min="0" max="100" value="50">
+        </div>
+        <button onclick="runAdvice()">Generate Recommendation</button>
+    </div>
+</div>
 
-        /* Chat Area */
-        #chat-box { 
-            flex: 1; padding: 20px; overflow-y: auto; background: #f4f7f6;
-            display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth;
-        }
+<script>
+    const stocks = [
+        { name: "Sembcorp Ind.", code: "U96", rationale: "Leader in Renewable energy transition.", return: "+12.4%" },
+        { name: "DBS Group", code: "D05", rationale: "High ESG Transparency & Governance score.", return: "+9.2%" }
+    ];
 
-        .msg { 
-            padding: 14px 18px; border-radius: 20px; font-size: 14px; 
-            max-width: 80%; line-height: 1.5; position: relative;
-            animation: slideUp 0.4s ease-out forwards;
-        }
+    function runAdvice() {
+        const chat = document.getElementById('chatContainer');
+        const envVal = document.getElementById('env').value;
         
-        .bot { 
-            background: white; border: 1px solid #eee; align-self: flex-start; 
-            border-bottom-left-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        
-        .user { 
-            background: var(--sgx-green); color: white; align-self: flex-end; 
-            border-bottom-right-radius: 4px; box-shadow: 0 4px 12px rgba(0,104,55,0.2);
-        }
+        // Add User Message
+        let u = document.createElement('div');
+        u.className = 'msg user';
+        u.innerHTML = `Environmental Priority: ${envVal}%`;
+        chat.appendChild(u);
 
-        /* Controls Section */
-        #controls { 
-            padding: 25px; background: white; border-top: 1px solid #eee;
-            border-radius: 30px 30px 0 0; box-shadow: 0 -10px 25px rgba(0,0,0,0.03);
-        }
+        // Add Bot Response
+        setTimeout(() => {
+            let b = document.createElement('div');
+            b.className = 'msg bot';
+            let selection = (envVal > 50) ? stocks[0] : stocks[1];
+            
+            b.innerHTML = `
+                <b>Match Found!</b><br>
+                Based on your preference, consider:
+                <div class="stock-card">
+                    <b>${selection.name} (${selection.code})</b><br>
+                    <small>Expected Return: ${selection.return}</small><br>
+                    <p style="font-size:11px; margin:5px 0 0;">${selection.rationale}</p>
+                </div>
+            `;
+            chat.appendChild(b);
+            chat.scrollTop = chat.scrollHeight;
+        }, 500);
+    }
+</script>
 
-        .slider-wrap { margin-bottom: 18px; }
-        .slider-wrap label { 
-            font-size: 12px; font-weight: 600; color: #666; 
-            display: flex; justify-content: space-between; margin-bottom: 8px;
-        }
-        
-        input[type=range] { 
-            width: 100%; height: 6px; border-radius: 5px; background: #ddd;
-            outline: none; accent-color: var(--sgx-green);
-        }
-
-        .btn-main { 
-            width
+</body>
+</html>
